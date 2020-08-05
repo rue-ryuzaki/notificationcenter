@@ -1,0 +1,7 @@
+[options]
+buildtype = release
+prefix = /usr/local
+backend = ninja
+
+[properties]
+
