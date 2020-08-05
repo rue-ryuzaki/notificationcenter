@@ -1,6 +1,8 @@
 # Notification Center
 Notification Center for TwisterOS: OSX style notification center.
 
+![NotificationCenter Screenshot](data/screenshot.png?raw=true)
+
 ## Building, Testing, and Installation
 
 You'll need the following dependencies:
