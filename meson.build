@@ -44,14 +44,8 @@ executable(
     'src/Widgets/Clock.vala',
     'src/Widgets/NowPlaying.vala',
     dependencies: [
-        dependency('gio-unix-2.0', version: '>=2.56.0'),
-        dependency('glib-2.0', version: '>=2.56.0'),
         dependency('gtk+-3.0', version: '>=3.22'),
-        dependency('gdk-3.0', version: '>=3.22.0'),
         dependency('cairo', version: '>=1.15.0'),
-        dependency('pango', version: '>=1.40.0'),
-        dependency('gee-0.8', version: '>=0.20.0'),
-        dependency('libgnome-menu-3.0', version: '>=3.13.0'),
         meson.get_compiler('c').find_library('m', required: false)
     ],
     c_args: [
