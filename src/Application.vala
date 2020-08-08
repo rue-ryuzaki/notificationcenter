@@ -351,6 +351,18 @@ public class NotificationCenterWindow : Window {
 
 		return true;
 	}
+
+    // Keyboard shortcuts
+    public override bool key_press_event (Gdk.EventKey event) {
+        switch (Gdk.keyval_name (event.keyval)) {
+            case "Escape":
+                this.destroy ();
+                return true;
+        }
+
+        base.key_press_event (event);
+        return false;
+    }
 }
 
 static int main (string[] args) {
