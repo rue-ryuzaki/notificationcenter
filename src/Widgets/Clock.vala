@@ -23,15 +23,80 @@ using Gtk;
 
 namespace NotificationCenter {
 
-    public class ClockWidget : DrawingArea {
+    public class ClockWidget : Gtk.Box {
+        public ClockWidget () {
+            var wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            wrapper.get_style_context ().add_class ("clock");
+
+			var clock_box = new Box (Orientation.HORIZONTAL, 0);
+			clock_box.get_style_context().add_class ("today_box_horizontal");
+
+			var clock_image = new Image();
+			clock_image.get_style_context().add_class ("today_image");
+			clock_image.set_from_icon_name("time", IconSize.SMALL_TOOLBAR);
+
+			var clock_app_name_label = new Gtk.Label("WORLD CLOCK");
+			clock_app_name_label.get_style_context().add_class ("today_app_name");
+
+            clock_box.add(clock_image);
+            clock_box.add(clock_app_name_label);
+
+			var clock_body_box = new Box (Orientation.HORIZONTAL, 0);
+			clock_body_box.get_style_context().add_class ("today_box_body");
+
+			/* Copenhagen */
+			var clock_container_box = new Box (Orientation.VERTICAL, 0);
+			clock_container_box.get_style_context().add_class ("today_box_body_clock_widget");
+
+			var clock = new ClockWidgetDraw("Copenhagen");
+			var clock_label = new Gtk.Label("Copenhagen");
+
+			clock_container_box.add(clock);
+			clock_container_box.add(clock_label);
+
+			clock_body_box.add(clock_container_box);
+
+			/* Moscow */
+			clock_container_box = new Box (Orientation.VERTICAL, 0);
+			clock_container_box.get_style_context().add_class ("today_box_body_clock_widget");			
+
+			clock = new ClockWidgetDraw("Moscow");
+			clock_label = new Gtk.Label("Moscow");
+
+			clock_container_box.add(clock);
+			clock_container_box.add(clock_label);
+
+			clock_body_box.add(clock_container_box);
+
+			/* Los Angeles */
+			clock_container_box = new Box (Orientation.VERTICAL, 0);
+			clock_container_box.get_style_context().add_class ("today_box_body_clock_widget");			
+
+			clock = new ClockWidgetDraw("Los Angeles");
+			clock_label = new Gtk.Label("Los Angeles");
+
+			clock_container_box.add(clock);
+			clock_container_box.add(clock_label);
+
+			clock_body_box.add(clock_container_box);
+
+			wrapper.add(clock_box);
+			wrapper.add(clock_body_box);            
+
+            this.add(wrapper);
+        }
+    }
+
+    public class ClockWidgetDraw : DrawingArea {
 
         private Time time;
         private int minute_offset;
         private bool dragging;
+        private string loc;
 
         public signal void time_changed (int hour, int minute);
 
-        public ClockWidget () {
+        public ClockWidgetDraw (string location) {
             add_events (Gdk.EventMask.BUTTON_PRESS_MASK
                       | Gdk.EventMask.BUTTON_RELEASE_MASK
                       | Gdk.EventMask.POINTER_MOTION_MASK);
@@ -39,6 +104,8 @@ namespace NotificationCenter {
 
 			// Set widget size
         	set_size_request (80, 80);
+
+        	this.loc = location;
 
             // update the clock once a second
             Timeout.add (1000, update);
@@ -50,11 +117,43 @@ namespace NotificationCenter {
             var radius = double.min (get_allocated_width () / 2,
                                      get_allocated_height () / 2) - 5;
 
+
             // clock back
             cr.arc (x, y, radius, 0, 2 * Math.PI);
-            cr.set_source_rgb (1, 1, 1);
-            cr.fill_preserve ();
-            cr.set_source_rgb (0, 0, 0);
+
+            // clock hands
+            var hours = this.time.hour;
+			var minutes = this.time.minute + this.minute_offset;
+            var seconds = this.time.second;
+
+            switch (this.loc) {
+            	case "Copenhagen": {
+            		hours = (this.time.hour - 5);
+            		break;
+            	}
+
+            	case "Moscow": {
+            		hours = (this.time.hour - 4);
+            		break;
+            	}
+
+            	case "Los Angeles": {
+            		hours = (this.time.hour - 2);
+            		break;
+            	}
+            }
+
+    		if (this.time.format("%p") == "TEST") {
+        		cr.set_source_rgb (0, 0, 0);
+        		cr.fill_preserve ();
+        		cr.set_source_rgb (1, 1, 1);
+    		}
+    		else {
+        		cr.set_source_rgb (1, 1, 1);
+        		cr.fill_preserve ();
+        		cr.set_source_rgb (0, 0, 0);
+    		}
+
             cr.stroke ();
 
             // clock ticks
@@ -77,12 +176,6 @@ namespace NotificationCenter {
                 cr.stroke ();
                 cr.restore ();  // stack pen-size
             }
-
-            // clock hands
-
-            var hours = this.time.hour;
-            var minutes = this.time.minute + this.minute_offset;
-            var seconds = this.time.second;
                         
             // hour hand:
             // the hour hand is rotated 30 degrees (pi/6 r) per hour +
@@ -183,7 +276,7 @@ namespace NotificationCenter {
 
         private bool update () {
             // update the time
-            this.time = Time.local (time_t ());
+            this.time = Time.local (time_t());
             redraw_canvas ();
             return true;        // keep running this event
         }

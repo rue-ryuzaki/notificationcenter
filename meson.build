@@ -43,6 +43,7 @@ executable(
     'src/Widgets/Calendar.vala',
     'src/Widgets/Clock.vala',
     'src/Widgets/NowPlaying.vala',
+    'src/Widgets/Patcher.vala',
     dependencies: [
         dependency('gtk+-3.0', version: '>=3.22'),
         dependency('cairo', version: '>=1.15.0'),

@@ -32,7 +32,7 @@ public class NotificationCenterWindow : Window {
     private Gtk.ToolButton today;
     private Gtk.ToolButton notifications;
 
-    private int width = 360;
+    private int width = 340;
 	private int location = 0;
 
     private void on_clicked_notifications (Box cbox) {
@@ -66,11 +66,7 @@ public class NotificationCenterWindow : Window {
 						var image = new Image();
 						image.get_style_context().add_class ("notification_image");
 
-						try {
-						    image.set_from_icon_name(app_icon, IconSize.SMALL_TOOLBAR);
-						} catch (Error e) {
-						    stderr.printf ("Could not load notification icon: %s\n", e.message);
-						}
+						image.set_from_icon_name(app_icon, IconSize.SMALL_TOOLBAR);
 
 	            		var packingBox_horizontal = new Box (Orientation.HORIZONTAL, 0);
 	            		packingBox_horizontal.get_style_context().add_class ("notification_box_horizontal");
@@ -92,21 +88,21 @@ public class NotificationCenterWindow : Window {
 						summary_label.get_style_context().add_class ("notification_summary");
 
 						var box_body = new Box (Orientation.HORIZONTAL, 0);
-						box_body.get_style_context().add_class ("notification_box_body");						
+						box_body.get_style_context().add_class ("notification_box_body");
 
-						var buffer = new Gtk.TextBuffer (null); //stores text to be displayed
-						buffer.text = body;
-						var textview = new Gtk.TextView.with_buffer (buffer); //displays TextBuffer
-						textview.set_wrap_mode (Gtk.WrapMode.WORD); //sets line wrapping
-						textview.set_property("editable", false);
-						textview.get_style_context().add_class ("notification_body");
+
+				        var notification_body = new Label(body);
+			            notification_body.selectable = true;
+			            notification_body.can_focus = false;
+				        notification_body.set_line_wrap(true);
+				        notification_body.get_style_context().add_class ("notification_body");
 
 						packingBox_horizontal.add(image);
 	            		packingBox_horizontal.add(app_name_label);
 	            		packingBox_horizontal.add(date_label);
 
 	            		box_summary.add(summary_label);
-	            		box_body.add(textview);
+	            		box_body.add(notification_body);
 
 	    				cbox.add(packingBox_horizontal);
 	    				cbox.add(box_summary);
@@ -115,7 +111,7 @@ public class NotificationCenterWindow : Window {
 	            }
 	        }
 	    } catch (Error e) {
-	        stderr.printf ("%s\n", e.message);
+	    	warning (e.message);
 	    }		
 
 	    cbox.show_all();
@@ -135,91 +131,20 @@ public class NotificationCenterWindow : Window {
 		cbox.add(today_date);
 
 		/* NowPlaying */
-		var nowplaying_box = new Box (Orientation.HORIZONTAL, 0);
-		nowplaying_box.get_style_context().add_class ("today_box_horizontal");
-
-		var nowplaying_image = new Image();
-		nowplaying_image.get_style_context().add_class ("today_image");
-
-		try {
-		    nowplaying_image.set_from_icon_name("music", IconSize.SMALL_TOOLBAR);
-		} catch (Error e) {
-		    stderr.printf ("Could not load notification icon: %s\n", e.message);
-		}
-
-		var nowplaying_app_name_label = new Gtk.Label("NOW PLAYING");
-		nowplaying_app_name_label.get_style_context().add_class ("today_app_name");
-
-		nowplaying_box.add(nowplaying_image);
-		nowplaying_box.add(nowplaying_app_name_label);
-
-		var nowplaying_box_body = new Box (Orientation.HORIZONTAL, 0);
-		nowplaying_box_body.get_style_context().add_class ("today_box_body");
-
 		var nowplaying = new NotificationCenter.NowPlayingWidget();
+		cbox.add(nowplaying);
 
-		nowplaying_box_body.add(nowplaying);
-
-		cbox.add(nowplaying_box);
-		cbox.add(nowplaying_box_body);
-
-		/* Clock */
-		var clock_box = new Box (Orientation.HORIZONTAL, 0);
-		clock_box.get_style_context().add_class ("today_box_horizontal");
-
-		var clock_image = new Image();
-		clock_image.get_style_context().add_class ("today_image");
-
-		try {
-		    clock_image.set_from_icon_name("time", IconSize.SMALL_TOOLBAR);
-		} catch (Error e) {
-		    stderr.printf ("Could not load notification icon: %s\n", e.message);
-		}
-
-		var clock_app_name_label = new Gtk.Label("WORLD CLOCK");
-		clock_app_name_label.get_style_context().add_class ("today_app_name");
-
-		clock_box.add(clock_image);
-		clock_box.add(clock_app_name_label);
-
-		var clock_box_body = new Box (Orientation.HORIZONTAL, 0);
-		clock_box_body.get_style_context().add_class ("today_box_body");
-
+		/* World Clock */
 		var clock = new NotificationCenter.ClockWidget();
-
-		clock_box_body.add(clock);
-
-		cbox.add(clock_box);
-		cbox.add(clock_box_body);
+		cbox.add(clock);
 
 		/* Calendar */
-		var calendar_box = new Box (Orientation.HORIZONTAL, 0);
-		calendar_box.get_style_context().add_class ("today_box_horizontal");
-
-		var calendar_image = new Image();
-		calendar_image.get_style_context().add_class ("today_image");
-
-		try {
-		    calendar_image.set_from_icon_name("calendar", IconSize.SMALL_TOOLBAR);
-		} catch (Error e) {
-		    stderr.printf ("Could not load notification icon: %s\n", e.message);
-		}
-
-		var calendar_app_name_label = new Gtk.Label("CALENDAR");
-		calendar_app_name_label.get_style_context().add_class ("today_app_name");
-
-		calendar_box.add(calendar_image);
-		calendar_box.add(calendar_app_name_label);
-
-		var calendar_box_body = new Box (Orientation.HORIZONTAL, 0);
-		calendar_box_body.get_style_context().add_class ("today_box_body");
-
 		var calendar = new NotificationCenter.CalendarWidget();
+		cbox.add(calendar);
 
-		calendar_box_body.add(calendar);
-
-		cbox.add(calendar_box);
-		cbox.add(calendar_box_body);
+		/* Calendar */
+		var patcher = new NotificationCenter.PatcherWidget();
+		cbox.add(patcher);		
 
 
 		cbox.show_all();
@@ -241,7 +166,8 @@ public class NotificationCenterWindow : Window {
         // set size, and slide out from right to left
         this.set_default_size (width,  monitor_dimensions.height - 30);
         this.move(monitor_dimensions.width + width, 0);
-        timerID = Timeout.add (10, on_timer_create_event);        
+       
+        timerID = Timeout.add (5, on_timer_create_event);        
 
         // container for today and notifications
         var cbox = new Box (Orientation.VERTICAL, 0);
@@ -288,7 +214,7 @@ public class NotificationCenterWindow : Window {
 	    });
 	    bottombar.add(edit_button);
 
-	    var settings_icon = new Gtk.Image.from_icon_name ("configure", IconSize.SMALL_TOOLBAR);
+	    var settings_icon = new Gtk.Image.from_icon_name ("settings-configure", IconSize.BUTTON);
 	    var settings_button = new Gtk.ToolButton(settings_icon, "");
 	    settings_button.get_style_context ().add_class ("settings_button");
 	    settings_button.clicked.connect (() => {
@@ -309,7 +235,7 @@ public class NotificationCenterWindow : Window {
 		this.show_all();
 
         this.draw.connect (this.draw_background);
-        this.focus_out_event.connect ( () => { this.destroy(); return true; } );		
+		this.focus_out_event.connect ( () => { this.destroy(); return true; } );		
     }
 
     private bool draw_background (Gtk.Widget widget, Cairo.Context ctx) {
@@ -318,20 +244,21 @@ public class NotificationCenterWindow : Window {
     }
 
 	private bool on_timer_create_event () {
-		location += 20;
+		location += 40;
 
 		if (location >= width) {
+			this.move(monitor_dimensions.width - width, 0);
         	return false;
 		}
 
 		this.move(monitor_dimensions.width - location, 0);
 
 		return true;
-	}    
+	}
 
     // Override destroy for fade out and stuff
     private new void destroy () {
-    	timerID = Timeout.add (10, on_timer_destroy_event);
+    	timerID = Timeout.add (5, on_timer_destroy_event);
     }
 
 	private bool on_timer_destroy_event () {
@@ -340,14 +267,16 @@ public class NotificationCenterWindow : Window {
 		if (location >= 380) {
         	base.destroy();
         	Gtk.main_quit();
+        	return false;
 		}
+		else {
+			int root_x;
+			int root_y;
 
-		int root_x;
-		int root_y;
+			this.get_position (out root_x, out root_y);
 
-		this.get_position (out root_x, out root_y);
-
-		this.move(root_x + 20, 0);
+			this.move(root_x + 20, 0);
+		}
 
 		return true;
 	}

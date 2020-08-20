@@ -19,6 +19,10 @@
 * Authored by: Kris Henriksen <krishenriksen.work@gmail.com>
 */
 
+.notificationcenter {
+
+}
+
 /* Today Widgets */
 .notificationcenter .today_date {
 	margin: 20px;
@@ -27,7 +31,8 @@
 }
 
 .notificationcenter .today_box_horizontal {
-	margin: 10px 30px 0 10px;
+	min-width: 290px;
+	margin: 10px 10px 0 10px;
 	background: rgba(238, 238, 238, 1);
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -40,11 +45,14 @@
 .notificationcenter .today_box_horizontal .today_app_name {
 	margin: 5px 0 5px 10px;
 	color: rgba(111, 111, 111, 1);
-	text-shadow: 0px 0 0 rgba(111, 111, 111, 1);
+	text-shadow: none;
+	background: none;
+	font-weight: 500;
 }
 
 .notificationcenter .today_box_body {
-	margin: 0 30px 0 10px;
+	min-width: 290px;
+	margin: 0 10px 0 10px;
 	padding: 15px 15px 15px 15px;
 	background: rgba(246, 246, 246, 1);
 	border-bottom-left-radius: 5px;
@@ -59,6 +67,11 @@
 	background: rgba(246, 246, 246, 1);
 }
 
+/* clock */
+.notificationcenter .clock .today_box_body_clock_widget {
+	margin-left: 15px;
+	background: none;
+}
 
 /* Notifications */
 .notificationcenter box {
@@ -103,7 +116,7 @@
 .notificationcenter .notification_box_horizontal .notification_app_name {
 	margin: 5px 0 5px 10px;
 	color: rgba(111, 111, 111, 1);
-	text-shadow: 0px 0 0 rgba(111, 111, 111, 1);
+	text-shadow: none;
 }
 
 .notificationcenter .notification_box_horizontal .notification_date {
@@ -118,7 +131,7 @@
 
 .notificationcenter .notification_box_summary .notification_summary {
 	padding: 10px 15px 0px 15px;
-	text-shadow: 0px 0 0 #000000;
+	text-shadow: none;
 }
 
 .notificationcenter .notification_box_body {
@@ -133,7 +146,7 @@
 
 }
 
-.notificationcenter .notification_box_body .notification_body text {
+.notificationcenter .notification_box_body .notification_body label {
 	color: rgba(111, 111, 111, 1);
 	background: rgba(246, 246, 246, 1);
 }

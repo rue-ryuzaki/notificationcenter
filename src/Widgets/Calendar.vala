@@ -24,24 +24,39 @@ using Gtk;
 namespace NotificationCenter {
     public class CalendarWidget : Gtk.Box {
         public CalendarWidget () {
-            var wrapper = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 3);
-            this.add (wrapper);
+            var wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            wrapper.get_style_context ().add_class ("calendar");
 
-            var label = new Gtk.Label ("No Events");
+			var calendar_box = new Box (Orientation.HORIZONTAL, 0);
+			calendar_box.get_style_context().add_class ("today_box_horizontal");
+
+			var calendar_image = new Image();
+			calendar_image.get_style_context().add_class ("today_image");
+			calendar_image.set_from_icon_name("calendar", IconSize.SMALL_TOOLBAR);
+
+			var calendar_app_name_label = new Gtk.Label("CALENDAR");
+			calendar_app_name_label.get_style_context().add_class ("today_app_name");
+
+            calendar_box.add(calendar_image);
+            calendar_box.add(calendar_app_name_label);
+
+			var calendar_body_box = new Box (Orientation.HORIZONTAL, 0);
+			calendar_body_box.get_style_context().add_class ("today_box_body");
+
+            var label = new Label ("No Events");
             // Mode to compress the text and add "..."
             label.set_ellipsize (Pango.EllipsizeMode.START);
             label.set_alignment(0.0f, 0.5f);
             label.selectable = true;
             label.can_focus = false;
             label.set_single_line_mode (true);
-            wrapper.pack_start (label, true, true, 0);
-            
-            this.draw.connect (this.draw_background);
-        }
 
-        private bool draw_background (Gtk.Widget widget, Cairo.Context ctx) {
-            widget.get_style_context ().add_class ("calendar");
-            return false;
+            calendar_body_box.add(label);
+
+			wrapper.add(calendar_box);
+			wrapper.add(calendar_body_box);            
+
+            this.add(wrapper);
         }
     }
 }
