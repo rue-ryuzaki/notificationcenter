@@ -49,11 +49,10 @@ namespace NotificationCenter {
 			var button = new Gtk.Button.with_label ("Patch TwisterOS to the latest version");
 
 			button.clicked.connect (() => {
-	            try {
-					GLib.AppInfo.create_from_commandline(user_home + "/patcher/patch.sh", null, GLib.AppInfoCreateFlags.NEEDS_TERMINAL).launch (null, null);
-	            } catch (GLib.Error e) {
-	            	warning ("Could not load patcher: %s", e.message);
-	            }
+		        try {
+		        	GLib.AppInfo info = AppInfo.create_from_commandline("xfce4-terminal --title=Patcher --hide-menubar --hide-borders --hide-scrollbar -e \"" + user_home + " /patcher/patch.sh\"", null, AppInfoCreateFlags.SUPPORTS_STARTUP_NOTIFICATION);
+		        	info.launch(null,Gdk.Display.get_default().get_app_launch_context());
+		        } catch (GLib.Error e){warning ("Could not load patcher: %s", e.message);}
 			});
 
             patcher_body_box.add(button);

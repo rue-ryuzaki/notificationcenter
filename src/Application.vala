@@ -295,19 +295,20 @@ public class NotificationCenterWindow : Window {
 }
 
 static int main (string[] args) {
-
     Gtk.init (ref args);
     Gtk.Application app = new Gtk.Application ("dk.krishenriksen.notificationcenter", GLib.ApplicationFlags.FLAGS_NONE);
 
+    // check for light or dark theme
+    File file = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.iraspbian-dark.twid");
+
     string css_file = Config.PACKAGE_SHAREDIR +
         "/" + Config.PROJECT_NAME +
-        "/" + "application.css";
+        "/" + (file.query_exists() ? "notificationcenter_dark.css" : "notificationcenter.css");
     var css_provider = new Gtk.CssProvider ();
 
     try {
         css_provider.load_from_path (css_file);
-        Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), css_provider,
-                                                        Gtk.STYLE_PROVIDER_PRIORITY_USER);
+        Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER);
     } catch (GLib.Error e) {
         warning ("Could not load CSS file: %s",css_file);
     }

@@ -59,6 +59,11 @@ executable(
 
 # Install CSS file
 install_data(
-    join_paths('data', 'application.css'),
+    join_paths('data', 'notificationcenter.css'),
+    install_dir: join_paths(datadir, PROJECT_NAME)
+)
+
+install_data(
+    join_paths('data', 'notificationcenter_dark.css'),
     install_dir: join_paths(datadir, PROJECT_NAME)
 )
