@@ -50,7 +50,7 @@ namespace NotificationCenter {
 
 			button.clicked.connect (() => {
 		        try {
-		        	GLib.AppInfo info = AppInfo.create_from_commandline("xfce4-terminal --title=Patcher --hide-menubar --hide-borders --hide-scrollbar -e \"" + user_home + " /patcher/patch.sh\"", null, AppInfoCreateFlags.SUPPORTS_STARTUP_NOTIFICATION);
+		        	GLib.AppInfo info = AppInfo.create_from_commandline("xfce4-terminal --title=Patcher --hide-menubar --hide-borders --hide-scrollbar -e \"" + user_home + "/patcher/patch.sh\"", null, AppInfoCreateFlags.SUPPORTS_STARTUP_NOTIFICATION);
 		        	info.launch(null,Gdk.Display.get_default().get_app_launch_context());
 		        } catch (GLib.Error e){warning ("Could not load patcher: %s", e.message);}
 			});
