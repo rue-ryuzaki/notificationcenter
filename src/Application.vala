@@ -142,10 +142,6 @@ public class NotificationCenterWindow : Window {
 		var calendar = new NotificationCenter.CalendarWidget();
 		cbox.add(calendar);
 
-		/* Calendar */
-		var patcher = new NotificationCenter.PatcherWidget();
-		cbox.add(patcher);		
-
 
 		cbox.show_all();
     }
