@@ -66,6 +66,8 @@ public class NotificationCenterWindow : Window {
 
                         if (File.new_for_path (app_icon).query_exists ()) {
                             image.set_from_pixbuf (new Gdk.Pixbuf.from_file_at_size (app_icon, 16, 16));
+                        } else if (File.new_for_path (user_home + "/.cache/xfce4/notifyd/icons/" + app_icon + ".png").query_exists ()) {
+                            image.set_from_pixbuf (new Gdk.Pixbuf.from_file_at_size (user_home + "/.cache/xfce4/notifyd/icons/" + app_icon + ".png", 16, 16));
                         } else {
 						    image.set_from_icon_name(app_icon, IconSize.SMALL_TOOLBAR);
 						}
