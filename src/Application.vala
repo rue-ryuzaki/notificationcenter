@@ -42,7 +42,7 @@ public class NotificationCenterWindow : Window {
 		}
 
 	    try {
-	    	string? res = "";
+	        Array<string> res = new Array<string> ();
 
 	        var file = File.new_for_path (user_home + "/.cache/xfce4/notifyd/log");
 
@@ -52,16 +52,14 @@ public class NotificationCenterWindow : Window {
 
 	            while ((line = dis.read_line (null)) != null) {
 	            	if (line != "") {
-	            	    res += line + ",";
-	            	} else if (res != "") {
-	            		string[] lines = res.split (",");
-	            		res = "";
-
-	            		string? date = lines[0];
-	            		string? app_name = lines[1].replace ("app_name=", "");
-	            		string? summary = lines[2].replace ("summary=", "");
-	            		string? body = lines[3].replace ("body=", "");
-	            		string? app_icon = lines[4].replace ("app_icon=", "");
+	            	    res.append_val (line);
+	            	} else if (res.length != 0) {
+	            		string? date = res.index (0);
+	            		string? app_name = res.index (1).replace ("app_name=", "");
+	            		string? summary = res.index (2).replace ("summary=", "");
+	            		string? body = res.index (3).replace ("body=", "");
+	            		string? app_icon = res.index (4).replace ("app_icon=", "");
+	            		res.set_size (0);
 
 						var image = new Image();
 						image.get_style_context().add_class ("notification_image");
