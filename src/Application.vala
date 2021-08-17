@@ -51,9 +51,9 @@ public class NotificationCenterWindow : Window {
 	            string line;
 
 	            while ((line = dis.read_line (null)) != null) {
-	            	res += line + ",";
-
-	            	if (line == "") {
+	            	if (line != "") {
+	            	    res += line + ",";
+	            	} else if (res != "") {
 	            		string[] lines = res.split (",");
 	            		res = "";
 
