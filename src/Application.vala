@@ -64,7 +64,11 @@ public class NotificationCenterWindow : Window {
 						var image = new Image();
 						image.get_style_context().add_class ("notification_image");
 
-						image.set_from_icon_name(app_icon, IconSize.SMALL_TOOLBAR);
+                        if (File.new_for_path (app_icon).query_exists ()) {
+                            image.set_from_pixbuf (new Gdk.Pixbuf.from_file_at_size (app_icon, 16, 16));
+                        } else {
+						    image.set_from_icon_name(app_icon, IconSize.SMALL_TOOLBAR);
+						}
 
 	            		var packingBox_horizontal = new Box (Orientation.HORIZONTAL, 0);
 	            		packingBox_horizontal.get_style_context().add_class ("notification_box_horizontal");
