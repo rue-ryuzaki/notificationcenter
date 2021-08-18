@@ -197,7 +197,7 @@ public class NotificationCenterWindow : Window {
 		toolbar.add (notifications);
 
 		var scroll = new ScrolledWindow (null, null);
-		scroll.set_policy (PolicyType.AUTOMATIC, PolicyType.AUTOMATIC);
+		scroll.set_policy (PolicyType.EXTERNAL, PolicyType.EXTERNAL);
 		scroll.add(cbox);
 
         // container for settings
