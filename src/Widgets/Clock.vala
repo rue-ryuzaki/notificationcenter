@@ -128,17 +128,17 @@ namespace NotificationCenter {
 
             switch (this.loc) {
             	case "Copenhagen": {
-            		hours = (this.time.hour - 5);
+            		hours = (this.time.hour + 2);
             		break;
             	}
 
             	case "Moscow": {
-            		hours = (this.time.hour - 4);
+            		hours = (this.time.hour + 3);
             		break;
             	}
 
             	case "Los Angeles": {
-            		hours = (this.time.hour - 2);
+            		hours = (this.time.hour - 7);
             		break;
             	}
             }
@@ -276,7 +276,7 @@ namespace NotificationCenter {
 
         private bool update () {
             // update the time
-            this.time = Time.local (time_t());
+            this.time = Time.gm (time_t());
             redraw_canvas ();
             return true;        // keep running this event
         }
