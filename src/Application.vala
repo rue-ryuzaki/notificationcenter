@@ -50,8 +50,9 @@ public class NotificationCenterWindow : Window {
 	            var dis = new DataInputStream (file.read ());
 	            string line;
 
-	            while ((line = dis.read_line (null)) != null) {
-	            	if (line != "") {
+	            while (true) {
+	            	line = dis.read_line (null);
+	            	if (line != null && line != "") {
 	            	    res.append_val (line);
 	            	} else if (res.length != 0) {
 	            		string? date = res.index (0);
@@ -111,6 +112,9 @@ public class NotificationCenterWindow : Window {
 	    				cbox.add(packingBox_horizontal);
 	    				cbox.add(box_summary);
 	    				cbox.add(box_body);
+	            	}
+	            	if (line == null) {
+	            	    break;
 	            	}
 	            }
 	        }
