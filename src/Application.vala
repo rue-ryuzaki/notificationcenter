@@ -112,6 +112,9 @@ public class NotificationCenterWindow : Window {
 	    				cbox.add(packingBox_horizontal);
 	    				cbox.add(box_summary);
 	    				cbox.add(box_body);
+	    				cbox.reorder_child(box_body, 0);
+	    				cbox.reorder_child(box_summary, 0);
+	    				cbox.reorder_child(packingBox_horizontal, 0);
 	            	}
 	            	if (line == null) {
 	            	    break;
