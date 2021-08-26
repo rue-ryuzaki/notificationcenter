@@ -107,6 +107,8 @@ public class NotificationCenterWindow : Window {
 			            notification_body.selectable = true;
 			            notification_body.can_focus = false;
 				        notification_body.set_line_wrap(true);
+				        notification_body.set_justify(Justification.FILL);
+				        notification_body.wrap_mode = Pango.WrapMode.WORD_CHAR;
 				        notification_body.get_style_context().add_class ("notification_body");
 
 						packingBox_horizontal.add(image);
