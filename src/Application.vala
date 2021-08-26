@@ -67,6 +67,7 @@ public class NotificationCenterWindow : Window {
 	            		    app_name = app_name.substring (app_name_split[0].length + app_name_split[1].length + 2);
 	            		    app_name = app_name.replace(".", " ");
 	            		}
+	            		body = body.replace("\\n", "\n");
 
 						var image = new Image();
 						image.get_style_context().add_class ("notification_image");
