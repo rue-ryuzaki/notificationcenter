@@ -66,6 +66,7 @@ public class NotificationCenterWindow : Window {
 	            		if (app_name_split.length > 2) {
 	            		    app_name = app_name.substring (app_name_split[0].length + app_name_split[1].length + 2);
 	            		    app_name = app_name.replace(".", " ");
+	            		    app_name = app_name.up (1) + app_name.substring (1);
 	            		}
 	            		body = body.replace("\\n", "\n");
 
