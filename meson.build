@@ -40,6 +40,7 @@ NotificationCenterValaArgs = [
 executable(
     meson.project_name(),
     'src/Application.vala',
+    'src/Settings.vala',
     'src/Widgets/Calendar.vala',
     'src/Widgets/Clock.vala',
     'src/Widgets/NowPlaying.vala',

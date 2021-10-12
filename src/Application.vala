@@ -35,6 +35,8 @@ public class NotificationCenterWindow : Window {
     private int width = 340;
 	private int location = 0;
 
+	private Settings settings;
+
     private void on_clicked_notifications (Box cbox) {
 		GLib.List<weak Gtk.Widget> children = cbox.get_children ();
 		foreach (Gtk.Widget element in children) {
@@ -131,22 +133,27 @@ public class NotificationCenterWindow : Window {
 		cbox.add(today_date);
 
 		/* NowPlaying */
-		var nowplaying = new NotificationCenter.NowPlayingWidget();
-		cbox.add(nowplaying);
+		if (settings.now_playing) {
+		    var nowplaying = new NotificationCenter.NowPlayingWidget();
+		    cbox.add(nowplaying);
+		}
 
 		/* World Clock */
-		var clock = new NotificationCenter.ClockWidget();
-		cbox.add(clock);
+		if (settings.world_clock) {
+		    var clock = new NotificationCenter.ClockWidget(settings.regions);
+		    cbox.add(clock);
+		}
 
 		/* Calendar */
-		var calendar = new NotificationCenter.CalendarWidget();
-		cbox.add(calendar);
-
+		if (settings.calendar) {
+		    var calendar = new NotificationCenter.CalendarWidget();
+		    cbox.add(calendar);
+		}
 
 		cbox.show_all();
     }
 
-    public NotificationCenterWindow () {
+    public NotificationCenterWindow (Settings app_settings) {
         this.set_title ("NotificationCenter");
         this.set_skip_pager_hint (true);
         this.set_skip_taskbar_hint (true); // Not display the window in the task bar
@@ -163,7 +170,9 @@ public class NotificationCenterWindow : Window {
         this.set_default_size (width,  monitor_dimensions.height - 30);
         this.move(monitor_dimensions.width + width, 0);
        
-        timerID = Timeout.add (5, on_timer_create_event);        
+        timerID = Timeout.add (5, on_timer_create_event);
+
+        this.settings = app_settings;
 
         // container for today and notifications
         var cbox = new Box (Orientation.VERTICAL, 0);
@@ -204,9 +213,10 @@ public class NotificationCenterWindow : Window {
         var bottombar = new Toolbar ();
         bottombar.get_style_context ().add_class ("bottombar");
 
+        var settings_window = new SettingsWindow (this, settings);
 	    var edit_button = new Gtk.ToolButton(null, "Edit");
 	    edit_button.clicked.connect (() => {
-            
+            settings_window.show_all ();
 	    });
 	    bottombar.add(edit_button);
 
@@ -231,7 +241,29 @@ public class NotificationCenterWindow : Window {
 		this.show_all();
 
         this.draw.connect (this.draw_background);
-		this.focus_out_event.connect ( () => { this.destroy(); return true; } );		
+		this.focus_out_event.connect ( () => {
+		    if (!settings_window.visible) {
+		        this.destroy();
+		        return true;
+		    }
+		    return true;
+		} );
+    }
+
+    public void apply_settings () {
+        string css_file = Config.PACKAGE_SHAREDIR +
+        "/" + Config.PROJECT_NAME +
+        "/" + (settings.dark_theme ? "notificationcenter_dark.css" : "notificationcenter.css");
+        var css_provider = new Gtk.CssProvider ();
+
+        try {
+            css_provider.load_from_path (css_file);
+            Gtk.StyleContext.add_provider_for_screen (Gdk.Screen.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER);
+        } catch (GLib.Error e) {
+            warning ("Could not load CSS file: %s",css_file);
+        }
+        settings.save ();
+        today.clicked ();
     }
 
     private bool draw_background (Gtk.Widget widget, Cairo.Context ctx) {
@@ -294,15 +326,26 @@ static int main (string[] args) {
     Gtk.init (ref args);
     Gtk.Application app = new Gtk.Application ("dk.krishenriksen.notificationcenter", GLib.ApplicationFlags.FLAGS_NONE);
 
-    // check for light or dark theme
-    File iraspbian = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.iraspbian-dark.twid");
-    File nighthawk = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.nighthawk.twid");
-    File twisteros = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.twisteros-dark.twid");
-    File iraspbiansur = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.iraspbiansur-dark.twid");
+	var app_settings = new Settings ();
+	if (!app_settings.load ()) {
+        app_settings.regions.insert (new Region ("Copengagen", 2), -1);
+        app_settings.regions.insert (new Region ("Moscow", 3), -1);
+        app_settings.regions.insert (new Region ("Los Angeles", -7), -1);
+
+        // check for light or dark theme
+        File iraspbian = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.iraspbian-dark.twid");
+        File nighthawk = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.nighthawk.twid");
+        File twisteros = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.twisteros-dark.twid");
+        File iraspbiansur = File.new_for_path (GLib.Environment.get_variable ("HOME") + "/.iraspbiansur-dark.twid");
+
+        var settings = new GLib.Settings ("org.gnome.desktop.interface");
+        var theme_name = settings.get_string ("gtk-theme");
+        app_settings.dark_theme = iraspbian.query_exists() || nighthawk.query_exists() || twisteros.query_exists() || iraspbiansur.query_exists() || theme_name.has_suffix ("-dark") || theme_name.has_suffix ("-Dark");
+	}
 
     string css_file = Config.PACKAGE_SHAREDIR +
         "/" + Config.PROJECT_NAME +
-        "/" + (iraspbian.query_exists() || nighthawk.query_exists() || twisteros.query_exists() || iraspbiansur.query_exists() ? "notificationcenter_dark.css" : "notificationcenter.css");
+        "/" + (app_settings.dark_theme ? "notificationcenter_dark.css" : "notificationcenter.css");
     var css_provider = new Gtk.CssProvider ();
 
     try {
@@ -314,7 +357,7 @@ static int main (string[] args) {
 
     app.activate.connect( () => {
         if (app.get_windows ().length () == 0) {
-            var main_window = new NotificationCenterWindow ();
+            var main_window = new NotificationCenterWindow (app_settings);
             main_window.set_application (app);
             main_window.show();
             Gtk.main ();
