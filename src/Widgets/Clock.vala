@@ -21,10 +21,25 @@
 
 using Gtk;
 
+public class Region {
+    public Region (string name = "", int hour = 0, int minute = 0, bool enabled = true)
+    {
+        this.name = name;
+        this.hour = hour;
+        this.minute = minute;
+        this.enabled = enabled;
+    }
+
+    public string name;
+    public int hour;
+    public int minute;
+    public bool enabled;
+}
+
 namespace NotificationCenter {
 
     public class ClockWidget : Gtk.Box {
-        public ClockWidget () {
+        public ClockWidget (List<Region> regions = new List<Region> ()) {
             var wrapper = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             wrapper.get_style_context ().add_class ("clock");
 
@@ -41,46 +56,34 @@ namespace NotificationCenter {
             clock_box.add(clock_image);
             clock_box.add(clock_app_name_label);
 
+			wrapper.add(clock_box);
+
 			var clock_body_box = new Box (Orientation.HORIZONTAL, 0);
 			clock_body_box.get_style_context().add_class ("today_box_body");
 
-			/* Copenhagen */
-			var clock_container_box = new Box (Orientation.VERTICAL, 0);
-			clock_container_box.get_style_context().add_class ("today_box_body_clock_widget");
+            var index = 0;
+            foreach (var region in regions) {
+                if (region.enabled) {
+                    if (index == 3) {
+                        wrapper.add(clock_body_box);
+                        clock_body_box = new Box (Orientation.HORIZONTAL, 0);
+                        clock_body_box.get_style_context().add_class ("today_box_body");
+                        index = 0;
+                    }
+                    var clock_container_box = new Box (Orientation.VERTICAL, 0);
+                    clock_container_box.get_style_context().add_class ("today_box_body_clock_widget");
 
-			var clock = new ClockWidgetDraw("Copenhagen");
-			var clock_label = new Gtk.Label("Copenhagen");
+                    var clock = new ClockWidgetDraw(region.name, region.hour, region.minute);
+                    var clock_label = new Gtk.Label(region.name);
 
-			clock_container_box.add(clock);
-			clock_container_box.add(clock_label);
+                    clock_container_box.add(clock);
+                    clock_container_box.add(clock_label);
 
-			clock_body_box.add(clock_container_box);
+                    clock_body_box.add_with_properties (clock_container_box, "expand", true);
+                    ++index;
+                }
+            }
 
-			/* Moscow */
-			clock_container_box = new Box (Orientation.VERTICAL, 0);
-			clock_container_box.get_style_context().add_class ("today_box_body_clock_widget");			
-
-			clock = new ClockWidgetDraw("Moscow");
-			clock_label = new Gtk.Label("Moscow");
-
-			clock_container_box.add(clock);
-			clock_container_box.add(clock_label);
-
-			clock_body_box.add(clock_container_box);
-
-			/* Los Angeles */
-			clock_container_box = new Box (Orientation.VERTICAL, 0);
-			clock_container_box.get_style_context().add_class ("today_box_body_clock_widget");			
-
-			clock = new ClockWidgetDraw("Los Angeles");
-			clock_label = new Gtk.Label("Los Angeles");
-
-			clock_container_box.add(clock);
-			clock_container_box.add(clock_label);
-
-			clock_body_box.add(clock_container_box);
-
-			wrapper.add(clock_box);
 			wrapper.add(clock_body_box);            
 
             this.add(wrapper);
@@ -91,21 +94,20 @@ namespace NotificationCenter {
 
         private Time time;
         private int minute_offset;
-        private bool dragging;
+        private int hour_offset;
         private string loc;
 
         public signal void time_changed (int hour, int minute);
 
-        public ClockWidgetDraw (string location) {
-            add_events (Gdk.EventMask.BUTTON_PRESS_MASK
-                      | Gdk.EventMask.BUTTON_RELEASE_MASK
-                      | Gdk.EventMask.POINTER_MOTION_MASK);
+        public ClockWidgetDraw (string location, int hour_offset, int minute_offset) {
             update ();
 
 			// Set widget size
         	set_size_request (80, 80);
 
         	this.loc = location;
+        	this.hour_offset = hour_offset;
+        	this.minute_offset = minute_offset;
 
             // update the clock once a second
             Timeout.add (1000, update);
@@ -122,28 +124,11 @@ namespace NotificationCenter {
             cr.arc (x, y, radius, 0, 2 * Math.PI);
 
             // clock hands
-            var hours = this.time.hour;
-			var minutes = this.time.minute + this.minute_offset;
+            var hours = this.time.hour + this.hour_offset;
+			var minutes = this.time.minute + (this.hour_offset >= 0 ? this.minute_offset : -this.minute_offset);
             var seconds = this.time.second;
 
-            switch (this.loc) {
-            	case "Copenhagen": {
-            		hours = (this.time.hour - 5);
-            		break;
-            	}
-
-            	case "Moscow": {
-            		hours = (this.time.hour - 4);
-            		break;
-            	}
-
-            	case "Los Angeles": {
-            		hours = (this.time.hour - 2);
-            		break;
-            	}
-            }
-
-    		if (this.time.format("%p") == "TEST") {
+    		if (((hours + 24) % 24) < 6 || ((hours + 24) % 24) >= 18) {
         		cr.set_source_rgb (0, 0, 0);
         		cr.fill_preserve ();
         		cr.set_source_rgb (1, 1, 1);
@@ -210,73 +195,9 @@ namespace NotificationCenter {
             return false;
         }
 
-        public override bool button_press_event (Gdk.EventButton event) {
-            var minutes = this.time.minute + this.minute_offset;
-
-            // From
-            // http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-            var px = event.x - get_allocated_width () / 2;
-            var py = get_allocated_height () / 2 - event.y;
-            var lx = Math.sin (Math.PI / 30 * minutes);
-            var ly = Math.cos (Math.PI / 30 * minutes);
-            var u = lx * px + ly * py;
-
-            // on opposite side of origin
-            if (u < 0) {
-                return false;
-            }
-
-            var d2 = Math.pow (px - u * lx, 2) + Math.pow (py - u * ly, 2);
-
-            if (d2 < 25) {      // 5 pixels away from the line
-                this.dragging = true;
-                print ("got minute hand\n");
-            }
-
-            return false;
-        }
-
-        public override bool button_release_event (Gdk.EventButton event) {
-            if (this.dragging) {
-                this.dragging = false;
-                emit_time_changed_signal ((int) event.x, (int) event.y);
-            }
-            return false;
-        }
-
-        public override bool motion_notify_event (Gdk.EventMotion event) {
-            if (this.dragging) {
-                emit_time_changed_signal ((int) event.x, (int) event.y);
-            }
-            return false;
-        }
-
-        private void emit_time_changed_signal (int x, int y) {
-            // decode the minute hand
-            // normalise the coordinates around the origin
-            x -= get_allocated_width () / 2;
-            y -= get_allocated_height () / 2;
-
-            // phi is a bearing from north clockwise, use the same geometry as
-            // we did to position the minute hand originally
-            var phi = Math.atan2 (x, -y);
-            if (phi < 0) {
-                phi += Math.PI * 2;
-            }
-
-            var hour = this.time.hour;
-            var minute = (int) (phi * 30 / Math.PI);
-        
-            // update the offset
-            this.minute_offset = minute - this.time.minute;
-            redraw_canvas ();
-
-            time_changed (hour, minute);
-        }
-
         private bool update () {
             // update the time
-            this.time = Time.local (time_t());
+            this.time = Time.gm (time_t());
             redraw_canvas ();
             return true;        // keep running this event
         }
