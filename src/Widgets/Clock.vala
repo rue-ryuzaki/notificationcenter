@@ -127,6 +127,14 @@ namespace NotificationCenter {
             var hours = this.time.hour + this.hour_offset;
 			var minutes = this.time.minute + (this.hour_offset >= 0 ? this.minute_offset : -this.minute_offset);
             var seconds = this.time.second;
+            while (minutes >= 60) {
+                minutes -= 60;
+                ++hours;
+            }
+            while (minutes < 0) {
+                minutes += 60;
+                --hours;
+            }
 
     		if (((hours + 24) % 24) < 6 || ((hours + 24) % 24) >= 18) {
         		cr.set_source_rgb (0, 0, 0);
