@@ -77,18 +77,22 @@ public class Settings {
 
     public void save ()
     {
-        var file = File.new_for_path (user_home + filename);
-        if (file.query_exists ()) {
-            file.delete ();
-        }
-        var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
+        try {
+            var file = File.new_for_path (user_home + filename);
+            if (file.query_exists ()) {
+                file.delete ();
+            }
+            var dos = new DataOutputStream (file.create (FileCreateFlags.REPLACE_DESTINATION));
 
-        dos.put_string ("dark_theme=" + dark_theme.to_string () + "\n");
-        dos.put_string ("now_playing=" + now_playing.to_string () + "\n");
-        dos.put_string ("world_clock=" + world_clock.to_string () + "\n");
-        dos.put_string ("calendar=" + calendar.to_string () + "\n");
-        foreach (var element in regions) {
-            dos.put_string ("region=" + element.name.to_string () + ";" + element.hour.to_string() + ";" + element.minute.to_string() + ";" + element.enabled.to_string() + "\n");
+            dos.put_string ("dark_theme=" + dark_theme.to_string () + "\n");
+            dos.put_string ("now_playing=" + now_playing.to_string () + "\n");
+            dos.put_string ("world_clock=" + world_clock.to_string () + "\n");
+            dos.put_string ("calendar=" + calendar.to_string () + "\n");
+            foreach (var element in regions) {
+                dos.put_string ("region=" + element.name.to_string () + ";" + element.hour.to_string() + ";" + element.minute.to_string() + ";" + element.enabled.to_string() + "\n");
+            }
+        } catch (Error e) {
+            warning (e.message);
         }
     }
 
@@ -105,11 +109,6 @@ public class Settings {
 public class ListBoxRowWithData: Gtk.ListBoxRow {
     // we are not using liststore or any data model here
     // we simply extend ListBoxRow class for handling rows easily
-    public string name;
-    public int hour;
-    public int minute;
-    public bool enabled;
-
     public Gtk.Entry entry_name;
     public Gtk.SpinButton entry_hour;
     public Gtk.SpinButton entry_minute;
@@ -124,18 +123,16 @@ public class ListBoxRowWithData: Gtk.ListBoxRow {
 
     public ListBoxRowWithData (string _name, int _hour, int _minute, bool _enabled)
     {
-        name = _name; hour = _hour; minute = _minute; enabled = _enabled;
-
         entry_name = new Gtk.Entry ();
-        entry_name.set_text (name);
+        entry_name.set_text (_name);
         entry_name.placeholder_text = "Name";
         entry_hour = new Gtk.SpinButton.with_range (-12, 12, 1);
-        entry_hour.set_value (hour);
+        entry_hour.set_value (_hour);
         entry_minute = new Gtk.SpinButton.with_range (0, 60, 15);
-        entry_minute.set_value (minute);
+        entry_minute.set_value (_minute);
         entry_enabled = new Gtk.Switch ();
-        entry_enabled.set_halign (Align.END);
-        entry_enabled.set_active (enabled);
+        entry_enabled.set_halign (Gtk.Align.END);
+        entry_enabled.set_active (_enabled);
 
         Gtk.Box rbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
         Gtk.Box inner_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
@@ -213,7 +210,7 @@ public class SettingsWindow : Dialog {
 
         var now_playing_frame = new Frame ("Now playing");
         now_playing_frame.add (now_playing_box);
-        now_playing_frame.set_shadow_type (ShadowType.NONE);
+        now_playing_frame.set_shadow_type (Gtk.ShadowType.NONE);
 
         var del_region_button = new Button.with_label ("-");
         var add_region_button = new Button.with_label ("+");
@@ -242,7 +239,7 @@ public class SettingsWindow : Dialog {
 
         var world_clock_frame = new Frame ("World clock");
         world_clock_frame.add (world_clock_box);
-        world_clock_frame.set_shadow_type (ShadowType.NONE);
+        world_clock_frame.set_shadow_type (Gtk.ShadowType.NONE);
 
         var calendar_box = new Box (Orientation.HORIZONTAL, 0);
         calendar_box.add (new Label ("Enable"));
@@ -250,7 +247,7 @@ public class SettingsWindow : Dialog {
 
         var calendar_frame = new Frame ("Calendar");
         calendar_frame.add (calendar_box);
-        calendar_frame.set_shadow_type (ShadowType.NONE);
+        calendar_frame.set_shadow_type (Gtk.ShadowType.NONE);
 
         var content = get_content_area () as Box;
         content.pack_start (theme_box, false, true, 0);
@@ -260,9 +257,9 @@ public class SettingsWindow : Dialog {
         content.spacing = 10;
 
         // Add buttons to button area at the bottom
-        add_button (Stock.APPLY, ResponseType.APPLY);
-        add_button (Stock.OK, ResponseType.OK);
-        add_button (Stock.CANCEL, ResponseType.CLOSE);
+        add_button ("Apply", Gtk.ResponseType.APPLY);
+        add_button ("Ok", Gtk.ResponseType.OK);
+        add_button ("Cancel", Gtk.ResponseType.CLOSE);
     }
 
     public void align_my_header ()
