@@ -213,6 +213,7 @@ public class SettingsWindow : Dialog {
 
         var now_playing_frame = new Frame ("Now playing");
         now_playing_frame.add (now_playing_box);
+        now_playing_frame.set_shadow_type (ShadowType.NONE);
 
         var del_region_button = new Button.with_label ("-");
         var add_region_button = new Button.with_label ("+");
@@ -241,6 +242,7 @@ public class SettingsWindow : Dialog {
 
         var world_clock_frame = new Frame ("World clock");
         world_clock_frame.add (world_clock_box);
+        world_clock_frame.set_shadow_type (ShadowType.NONE);
 
         var calendar_box = new Box (Orientation.HORIZONTAL, 0);
         calendar_box.add (new Label ("Enable"));
@@ -248,6 +250,7 @@ public class SettingsWindow : Dialog {
 
         var calendar_frame = new Frame ("Calendar");
         calendar_frame.add (calendar_box);
+        calendar_frame.set_shadow_type (ShadowType.NONE);
 
         var content = get_content_area () as Box;
         content.pack_start (theme_box, false, true, 0);
