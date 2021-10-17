@@ -219,7 +219,6 @@ namespace NotificationCenter {
             var region = window.get_clip_region ();
             // redraw the cairo canvas completely by exposing it
             window.invalidate_region (region, true);
-            window.process_updates (true);
         }
     }
 }
