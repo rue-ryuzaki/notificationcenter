@@ -125,7 +125,7 @@ namespace NotificationCenter {
 
             // clock hands
             var hours = this.time.hour + this.hour_offset;
-			var minutes = this.time.minute + (this.hour_offset >= 0 ? this.minute_offset : -this.minute_offset);
+            var minutes = this.time.minute + this.minute_offset;
             var seconds = this.time.second;
             while (minutes >= 60) {
                 minutes -= 60;
