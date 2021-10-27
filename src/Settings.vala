@@ -128,7 +128,7 @@ public class ListBoxRowWithData: Gtk.ListBoxRow {
         entry_name.placeholder_text = "Name";
         entry_hour = new Gtk.SpinButton.with_range (-12, 12, 1);
         entry_hour.set_value (_hour);
-        entry_minute = new Gtk.SpinButton.with_range (0, 60, 15);
+        entry_minute = new Gtk.SpinButton.with_range (-60, 60, 15);
         entry_minute.set_value (_minute);
         entry_enabled = new Gtk.Switch ();
         entry_enabled.set_halign (Gtk.Align.END);
