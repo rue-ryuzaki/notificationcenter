@@ -64,6 +64,17 @@
 	background: rgba(33, 33, 33, 1);
 }
 
+.notificationcenter .player {
+	color: #ffffff;
+	background: rgba(40, 40, 40, 1);
+}
+
+.notificationcenter .player button {
+	color: #ffffff;
+	background: rgba(40, 40, 40, 1);
+	min-width: 15px;
+}
+
 .notificationcenter .calendar label {
 	color: rgba(151, 151, 151, 1);
 	background: rgba(40, 40, 40, 1);
