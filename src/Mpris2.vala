@@ -160,14 +160,14 @@ public class Mpris2Controller : GLib.Object
     public MprisRoot mpris2_root;
     public MprisPlayer player;
     public MprisPlaylists playlists;
-    //public HashTable<string, PlaylistDetails?> name_changed_playlistdetails { get; construct; }
+    public HashTable<string, PlaylistDetails?> name_changed_playlistdetails { get; construct; }
     public Mpris2Controller (string name)
     {
         GLib.Object (dbus_name : name);
     }
     construct {
         try {
-            //this.name_changed_playlistdetails = new HashTable<string, PlaylistDetails?> ();
+            this.name_changed_playlistdetails = new HashTable<string, PlaylistDetails?> (str_hash, str_equal);
             this.mpris2_root = Bus.get_proxy_sync ( BusType.SESSION,
                                                     dbus_name,
                                                     "/org/mpris/MediaPlayer2" );
@@ -186,7 +186,7 @@ public class Mpris2Controller : GLib.Object
 
     private void on_playlistdetails_changed (PlaylistDetails details)
     {
-        //this.name_changed_playlistdetails.set (details.name, details);
+        this.name_changed_playlistdetails.set (details.name, details);
     }
 }
 
