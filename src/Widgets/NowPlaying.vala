@@ -55,7 +55,7 @@ namespace NotificationCenter {
                 var next_button = new Gtk.Button.with_label (">>");
                 next_button.set_sensitive (false);
                 next_button.clicked.connect (() => { controller.player.Next.begin (); });
-                var label = new Gtk.Label (controller.player.Metadata.lookup ("xesam:title")?.get_string ());
+                var label = new Gtk.Label ("No Info");
                 label.set_ellipsize (Pango.EllipsizeMode.START);
                 label.set_alignment (0.0f, 0.5f);
                 label.selectable = true;
@@ -73,7 +73,8 @@ namespace NotificationCenter {
                     next_button.set_sensitive (controller.player.CanGoNext);
                     play_button.set_label (controller.player.PlaybackStatus == "Playing" ? "||" : ">");
                     var metadata = controller.player.Metadata;
-                    label.set_text (metadata.lookup ("xesam:title")?.get_string ());
+                    var title = metadata.lookup ("xesam:title");
+                    label.set_text (title != null ? title.get_string () : "No Info");
                     return true;
                 });
 
