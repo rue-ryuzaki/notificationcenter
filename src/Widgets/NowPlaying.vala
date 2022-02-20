@@ -56,15 +56,16 @@ namespace NotificationCenter {
                 next_button.set_sensitive (false);
                 next_button.clicked.connect (() => { controller.player.Next.begin (); });
                 var label = new Gtk.Label ("No Info");
-                label.set_ellipsize (Pango.EllipsizeMode.START);
+                label.set_ellipsize (Pango.EllipsizeMode.END);
                 label.set_alignment (0.0f, 0.5f);
                 label.selectable = true;
                 label.can_focus = false;
                 label.set_single_line_mode (true);
 
+                var app_name = name.replace (MPRIS_PREFIX, "").split (".")[0];
                 var image = new Gtk.Image ();
                 image.get_style_context ().add_class ("today_image");
-                image.set_from_icon_name (name.replace (MPRIS_PREFIX, "").split (".")[0], Gtk.IconSize.SMALL_TOOLBAR);
+                image.set_from_icon_name (app_name == "chromium" ? "chromium-browser" : app_name, Gtk.IconSize.LARGE_TOOLBAR);
 
                 Timeout.add (250, () =>
                 {
