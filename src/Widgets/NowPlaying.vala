@@ -30,7 +30,7 @@ namespace NotificationCenter {
 
             var nowplaying_image = new Gtk.Image();
             nowplaying_image.get_style_context().add_class ("today_image");
-            nowplaying_image.set_from_icon_name("gnome-music", Gtk.IconSize.SMALL_TOOLBAR);
+            nowplaying_image.set_from_icon_name("media-audio", Gtk.IconSize.SMALL_TOOLBAR);
 
             var nowplaying_app_name_label = new Gtk.Label("NOW PLAYING");
             nowplaying_app_name_label.get_style_context().add_class ("today_app_name");
