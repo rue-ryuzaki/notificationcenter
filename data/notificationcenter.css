@@ -84,6 +84,7 @@
 }
 
 .notificationcenter toolbar button {
+	padding: 5px 10px 5px 10px;
 	border: 0;
 	color: #ffffff;
 	background: rgba(192, 192, 192, 1);
