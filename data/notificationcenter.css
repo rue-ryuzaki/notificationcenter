@@ -59,23 +59,22 @@
 	border-bottom-right-radius: 5px;
 }
 
-.notificationcenter .player {
-	background: rgba(246, 246, 246, 1);
-	color: rgba(111, 111, 111, 1);
-}
-
-.notificationcenter .player button {
-	background: rgba(246, 246, 246, 1);
-	color: rgba(111, 111, 111, 1);
-	min-width: 15px;
-}
-
 .notificationcenter .calendar label {
 	background: rgba(246, 246, 246, 1);
 }
 
 .notificationcenter .nowplaying label {
 	background: rgba(246, 246, 246, 1);
+}
+
+.notificationcenter .player {
+	background: rgba(246, 246, 246, 1);
+	color: rgba(111, 111, 111, 1);
+}
+
+.notificationcenter .player button {
+	padding: 5px 10px 5px 10px;
+	background: none;
 }
 
 /* clock */
