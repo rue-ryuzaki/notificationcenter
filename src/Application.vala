@@ -210,7 +210,7 @@ public class NotificationCenterWindow : Window {
 	    });
 	    bottombar.add(edit_button);
 
-	    var settings_icon = new Gtk.Image.from_icon_name ("settings-configure", IconSize.BUTTON);
+	    var settings_icon = new Gtk.Image.from_icon_name ("system_section", IconSize.BUTTON);
 	    var settings_button = new Gtk.ToolButton(settings_icon, "");
 	    settings_button.get_style_context ().add_class ("settings_button");
 	    settings_button.clicked.connect (() => {
